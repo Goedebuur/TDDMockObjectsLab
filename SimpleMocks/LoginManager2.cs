@@ -43,7 +43,7 @@ namespace MyBillingProduct
                 {
                     service.Write("logger failed");
                 }
-                
+
                 return true;
             }
             return false;

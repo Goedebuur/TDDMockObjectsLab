@@ -1,11 +1,14 @@
 using System;
 using System.Runtime.Serialization;
 
+using Step1Mocks;
+
 namespace MyBillingProduct
 {
     public interface ILogger
     {
         void  Write(string text);
+        void Write(TraceMessage message);
     }
 
     public class LoggerException:Exception

@@ -51,7 +51,7 @@ namespace SimpleMocks.tests
             Mock<IWebService> serviceMock = new Mock<IWebService>();
 
             loggerMock.Setup(x => x.Write(It.IsAny<string>()))
-            .Throws<NotImplementedException>();
+                .Throws<NotImplementedException>();
 
             LoginManager2 loginManager2 = CreateLoginManager2(loggerMock.Object, serviceMock.Object);
             loginManager2.AddUser(SomeUser, SomePassword);

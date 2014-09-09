@@ -30,6 +30,38 @@ namespace SimpleMocks.tests
         }
 
         [Test]
+        public void AddUser_SomeUserSomePassword_LogContainsUserAdded()
+        {
+            //Arrange
+            FakeLogger fakeLogger = CreateFakeLogger();
+            LoginManager1 loginManager1 = CreateLoginManager1(fakeLogger);
+
+            //Act
+            loginManager1.AddUser(SomeUser, SomePassword);
+
+            //Assert
+            StringAssert.Contains(string.Format("user added: [{0}],[{1}]", SomeUser, SomePassword), fakeLogger.Log);
+        }
+
+        [Test]
+        public void ChangePass_SomePasswordToSomethingElse_LogContainsPassChanged()
+        {
+            //Arrange
+            Mock<ILogger> loggerMock = new Mock<ILogger>();
+            LoginManager1 loginManager1 = CreateLoginManager1(loggerMock.Object);
+            loginManager1.AddUser(SomeUser, SomePassword);
+            const string newPassword = "B";
+
+            //Act
+            loginManager1.ChangePass(SomeUser, SomePassword, newPassword);
+
+            //Assert
+            loggerMock.Verify(
+                logger =>
+                    logger.Write(string.Format("pass changed: [{0}],[{1}],[{2}]", SomeUser, SomePassword, newPassword)));
+        }
+
+        [Test]
         public void IsLoginOK_ExistingUserNameEmptyPassword_LogContainsFail()
         {
             //Arrange
@@ -74,39 +106,6 @@ namespace SimpleMocks.tests
 
             //Assert
             StringAssert.Contains(string.Format("bad login: [{0}],[{1}]", unknownUser, SomePassword), fakeLogger.Log);
-        }
-
-
-        [Test]
-        public void AddUser_SomeUserSomePassword_LogContainsUserAdded()
-        {
-            //Arrange
-            FakeLogger fakeLogger = CreateFakeLogger();
-            LoginManager1 loginManager1 = CreateLoginManager1(fakeLogger);
-
-            //Act
-            loginManager1.AddUser(SomeUser, SomePassword);
-
-            //Assert
-            StringAssert.Contains(string.Format("user added: [{0}],[{1}]", SomeUser, SomePassword), fakeLogger.Log);
-
-        }
-
-        [Test]
-        public void ChangePass_SomePasswordToSomethingElse_LogContainsPassChanged()
-        {
-            //Arrange
-            Mock<ILogger> loggerMock = new Mock<ILogger>();
-            LoginManager1 loginManager1 = CreateLoginManager1(loggerMock.Object);
-            loginManager1.AddUser(SomeUser, SomePassword);
-            const string newPassword = "B";
-
-            //Act
-            loginManager1.ChangePass(SomeUser, SomePassword, newPassword);
-
-            //Assert
-            loggerMock.Verify(logger => logger.Write(string.Format("pass changed: [{0}],[{1}],[{2}]", SomeUser, SomePassword, newPassword)));
-
         }
     }
 }
