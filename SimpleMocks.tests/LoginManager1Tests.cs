@@ -73,5 +73,21 @@ namespace SimpleMocks.tests
             //Assert
             StringAssert.Contains(string.Format("bad login: [{0}],[{1}]", unknownUser, SomePassword), fakeLogger.Log);
         }
+
+
+        [Test]
+        public void AddUser_SomeUserSomePassword_LogContainsUserAdded()
+        {
+            //Arrange
+            FakeLogger fakeLogger = CreateFakeLogger();
+            LoginManager1 loginManager1 = CreateLoginManager1(fakeLogger);
+
+            //Act
+            loginManager1.AddUser(SomeUser, SomePassword);
+
+            //Assert
+            StringAssert.Contains(string.Format("user added: [{0}],[{1}]", SomeUser, SomePassword), fakeLogger.Log);
+
+        }
     }
 }

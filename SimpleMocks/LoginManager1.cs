@@ -20,6 +20,7 @@ namespace MyBillingProduct
         public void AddUser(string user, string password)
         {
             m_users[user] = password;
+            _logger.Write(String.Format("user added: [{0}],[{1}]", user, password));
         }
 
         public void ChangePass(string user, string oldPass, string newPassword)
