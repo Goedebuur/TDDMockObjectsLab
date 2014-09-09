@@ -28,6 +28,22 @@ namespace SimpleMocks.tests
         }
 
         [Test]
+        public void IsLoginOK_ExistingUserNameEmptyPassword_LogContainsFail()
+        {
+            //Arrange
+            FakeLogger fakeLogger = CreateFakeLogger();
+            LoginManager1 loginManager1 = CreateLoginManager1(fakeLogger);
+            loginManager1.AddUser(SomeUser, SomePassword);
+            const string unknownPassword = "A";
+
+            //Act
+            loginManager1.IsLoginOK(SomeUser, unknownPassword);
+
+            //Assert
+            StringAssert.Contains(string.Format("bad login: [{0}],[{1}]", SomeUser, unknownPassword), fakeLogger.Log);
+        }
+
+        [Test]
         public void IsLoginOK_ExistingUserNameExistingPassword_LogContainsOk()
         {
             //Arrange
@@ -40,6 +56,22 @@ namespace SimpleMocks.tests
 
             //Assert
             StringAssert.Contains(string.Format("login ok: user: {0}", SomeUser), fakeLogger.Log);
+        }
+
+        [Test]
+        public void IsLoginOK_UnknownUserNameExistingPassword_LogContainsFail()
+        {
+            //Arrange
+            FakeLogger fakeLogger = CreateFakeLogger();
+            LoginManager1 loginManager1 = CreateLoginManager1(fakeLogger);
+            loginManager1.AddUser(SomeUser, SomePassword);
+            const string unknownUser = "A";
+
+            //Act
+            loginManager1.IsLoginOK(unknownUser, SomePassword);
+
+            //Assert
+            StringAssert.Contains(string.Format("bad login: [{0}],[{1}]", unknownUser, SomePassword), fakeLogger.Log);
         }
     }
 }

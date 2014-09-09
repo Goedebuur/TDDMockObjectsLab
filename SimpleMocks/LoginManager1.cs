@@ -36,6 +36,8 @@ namespace MyBillingProduct
                 _logger.Write(String.Format("login ok: user: {0}", user));
                 return true;
             }
+
+            _logger.Write(String.Format("bad login: [{0}],[{1}]", user, password));
             return false;
         }
     }
