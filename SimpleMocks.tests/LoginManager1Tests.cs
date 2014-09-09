@@ -1,4 +1,6 @@
-﻿using MyBillingProduct;
+﻿using Moq;
+
+using MyBillingProduct;
 
 using NUnit.Framework;
 
@@ -22,7 +24,7 @@ namespace SimpleMocks.tests
             get { return "testUser"; }
         }
 
-        private static LoginManager1 CreateLoginManager1(FakeLogger fakeLogger)
+        private static LoginManager1 CreateLoginManager1(ILogger fakeLogger)
         {
             return new LoginManager1(fakeLogger);
         }
@@ -87,6 +89,23 @@ namespace SimpleMocks.tests
 
             //Assert
             StringAssert.Contains(string.Format("user added: [{0}],[{1}]", SomeUser, SomePassword), fakeLogger.Log);
+
+        }
+
+        [Test]
+        public void ChangePass_SomePasswordToSomethingElse_LogContainsPassChanged()
+        {
+            //Arrange
+            Mock<ILogger> loggerMock = new Mock<ILogger>();
+            LoginManager1 loginManager1 = CreateLoginManager1(loggerMock.Object);
+            loginManager1.AddUser(SomeUser, SomePassword);
+            const string newPassword = "B";
+
+            //Act
+            loginManager1.ChangePass(SomeUser, SomePassword, newPassword);
+
+            //Assert
+            loggerMock.Verify(logger => logger.Write(string.Format("pass changed: [{0}],[{1}],[{2}]", SomeUser, SomePassword, newPassword)));
 
         }
     }

@@ -26,6 +26,7 @@ namespace MyBillingProduct
         public void ChangePass(string user, string oldPass, string newPassword)
         {
             m_users[user] = newPassword;
+            _logger.Write(string.Format("pass changed: [{0}],[{1}],[{2}]", user, oldPass, newPassword));
         }
 
         public bool IsLoginOK(string user, string password)
