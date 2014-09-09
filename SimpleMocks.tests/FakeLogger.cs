@@ -15,7 +15,7 @@ namespace SimpleMocks.tests
 
         public void Write(TraceMessage message)
         {
-            throw new NotImplementedException();
+            Log += message.Message;
         }
 
         public string Log { get; set; }

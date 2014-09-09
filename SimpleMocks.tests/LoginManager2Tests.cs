@@ -29,6 +29,42 @@ namespace SimpleMocks.tests
         }
 
         [Test]
+        public void ChangePass_CorrectOldPasswordSomeNewPassword_LogContainsPassChanged()
+        {
+            //Arrange
+            FakeLogger fakeLogger = new FakeLogger();
+            FakeWebService fakeWebService = new FakeWebService();
+            LoginManager2 loginManager2 = CreateLoginManager2(fakeLogger, fakeWebService);
+            loginManager2.AddUser(SomeUser, SomePassword);
+            string newPassword = SomePassword + "ABC";
+
+            //Act
+            loginManager2.ChangePass(SomeUser, SomePassword, newPassword);
+
+            //Assert
+            StringAssert.Contains(
+                string.Format("pass changed: [{0}],[{1}],[{2}]", SomeUser, SomePassword, newPassword),
+                fakeLogger.Log);
+        }
+
+        [Test]
+        [ExpectedException(typeof (ArgumentException))]
+        public void ChangePass_WrongOldPasswordSomeNewPassword_ExceptionExpected()
+        {
+            //Arrange
+            FakeLogger fakeLogger = new FakeLogger();
+            FakeWebService fakeWebService = new FakeWebService();
+            LoginManager2 loginManager2 = CreateLoginManager2(fakeLogger, fakeWebService);
+            loginManager2.AddUser(SomeUser, SomePassword);
+            string newPassword = SomePassword + "ABC";
+
+            //Act
+            loginManager2.ChangePass(SomeUser, SomePassword + "A", newPassword);
+
+            //Assert
+        }
+
+        [Test]
         public void IsLoginOK_ExistingUserNameExistingPassword_LogContainsOk()
         {
             //Arrange
@@ -42,10 +78,12 @@ namespace SimpleMocks.tests
             loginManager2.IsLoginOK(SomeUser, SomePassword);
 
             //Assert
-            loggerMock.Verify(logger => logger.Write(It.Is<TraceMessage>(
-                            message =>
-                                message.Severity == 1000
-                                    && message.Message == string.Format("login ok: user: {0}", SomeUser))));
+            loggerMock.Verify(
+                logger => logger.Write(
+                    It.Is<TraceMessage>(
+                        message =>
+                            message.Severity == 1000
+                                && message.Message == string.Format("login ok: user: {0}", SomeUser))));
         }
 
         [Test]

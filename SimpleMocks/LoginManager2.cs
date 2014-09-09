@@ -28,7 +28,13 @@ namespace MyBillingProduct
 
         public void ChangePass(string user, string oldPass, string newPassword)
         {
+            if (m_users[user] != oldPass)
+            {
+                throw new ArgumentException();
+            }
+
             m_users[user] = newPassword;
+            log.Write(string.Format("pass changed: [{0}],[{1}],[{2}]", user, oldPass, newPassword));
         }
 
         public bool IsLoginOK(string user, string password)
