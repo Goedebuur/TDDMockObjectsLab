@@ -36,6 +36,58 @@ namespace SimpleMocks.tests
             StringAssert.Contains(string.Format("login ok: user: {0}", SomeUser), testableLoginManager.CallLogText);
 
         }
+
+        [Test]
+        public void IsLoginOK_UnknownUserKnownPassword_LogsFailed()
+        {
+            //Arrange
+            TestableLoginManagerWithStatics testableLoginManager = new TestableLoginManagerWithStatics();
+            testableLoginManager.AddUser(SomeUser, SomePassword);
+            
+            string unknownUser = SomeUser + "ABC";
+
+            //Act
+            testableLoginManager.IsLoginOK(unknownUser, SomePassword);
+
+            //Assert
+            StringAssert.Contains("failed", testableLoginManager.CallLogText);
+
+        }
+
+        [Test]
+        public void IsLoginOK_KnownUserUnknownPassword_LogsFailed()
+        {
+            //Arrange
+            TestableLoginManagerWithStatics testableLoginManager = new TestableLoginManagerWithStatics();
+            testableLoginManager.AddUser(SomeUser, SomePassword);
+            
+            string unknownPassword = SomePassword + "ABC";
+
+            //Act
+            testableLoginManager.IsLoginOK(SomeUser, unknownPassword);
+
+            //Assert
+            StringAssert.Contains("failed", testableLoginManager.CallLogText);
+
+        }
+
+        [Test]
+        public void IsLoginOK_UnknownUserUnknownPassword_LogsFailed()
+        {
+            //Arrange
+            TestableLoginManagerWithStatics testableLoginManager = new TestableLoginManagerWithStatics();
+            testableLoginManager.AddUser(SomeUser, SomePassword);
+           
+            string unknownUser = SomeUser + "ABC";
+            string unknownPassword = SomePassword + "ABC";
+
+            //Act
+            testableLoginManager.IsLoginOK(unknownUser, unknownPassword);
+
+            //Assert
+            StringAssert.Contains("failed", testableLoginManager.CallLogText);
+
+        }
     }
 
     class TestableLoginManagerWithStatics : LoginManagerWithStatics

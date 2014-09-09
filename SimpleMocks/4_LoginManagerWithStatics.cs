@@ -25,6 +25,8 @@ namespace MyBillingProduct
 			        string.Format("login ok: user: {0}", user));
 				return true;
 			}
+
+            CallLog("failed");
 			return false;
 		}
 
