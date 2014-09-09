@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using Moq;
 
@@ -24,6 +21,11 @@ namespace SimpleMocks.tests
             get { return "testUser"; }
         }
 
+        private LoginManager2 CreateLoginManager2(ILogger logger, IWebService service)
+        {
+            return new LoginManager2(logger, service);
+        }
+
         [Test]
         public void IsLoginOK_ExistingUserNameExistingPassword_LogContainsOk()
         {
@@ -41,9 +43,24 @@ namespace SimpleMocks.tests
             loggerMock.Verify(logger => logger.Write(string.Format("login ok: user: {0}", SomeUser)));
         }
 
-        private LoginManager2 CreateLoginManager2(ILogger logger, IWebService service)
+        [Test]
+        public void IsLoginOK_LoggerThrowsException_CallsWebserviceWrite()
         {
-            return new LoginManager2(logger, service);
+            //Arrange
+            Mock<ILogger> loggerMock = new Mock<ILogger>();
+            Mock<IWebService> serviceMock = new Mock<IWebService>();
+
+            loggerMock.Setup(x => x.Write(It.IsAny<string>()))
+            .Throws<NotImplementedException>();
+
+            LoginManager2 loginManager2 = CreateLoginManager2(loggerMock.Object, serviceMock.Object);
+            loginManager2.AddUser(SomeUser, SomePassword);
+
+            //Act
+            loginManager2.IsLoginOK(SomeUser, SomePassword);
+
+            //Assert
+            serviceMock.Verify(service => service.Write("logger failed"));
         }
     }
 }
