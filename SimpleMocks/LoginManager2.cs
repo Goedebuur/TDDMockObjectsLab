@@ -21,6 +21,7 @@ namespace MyBillingProduct
 	        if (m_users[user] != null &&
 	            m_users[user] == password)
 	        {
+	            log.Write(string.Format("login ok: user: {0}", user));
 	            return true;
 	        }
 	        return false;

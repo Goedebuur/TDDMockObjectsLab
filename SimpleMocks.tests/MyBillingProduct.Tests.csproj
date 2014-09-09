@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="FakeLogger.cs" />
     <Compile Include="LoginManager1Tests.cs" />
+    <Compile Include="LoginManager2Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
