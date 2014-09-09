@@ -38,6 +38,37 @@ namespace SimpleMocks.tests
         }
 
         [Test]
+        public void ChangePass_CorrectOldPasswordSomeNewPassword_LogsChanged()
+        {
+            //Arrange
+            TestableLoginManagerWithStatics testableLoginManager = new TestableLoginManagerWithStatics();
+            testableLoginManager.AddUser(SomeUser, SomePassword);
+
+            //Act
+            testableLoginManager.ChangePass(SomeUser, SomePassword, "ABC");
+
+            //Assert
+            StringAssert.Contains("changed", testableLoginManager.CallLogText);
+
+        }
+
+        [Test]
+        public void ChangePass_InCorrectOldPasswordSomeNewPassword_LogsNotChanged()
+        {
+            //Arrange
+            TestableLoginManagerWithStatics testableLoginManager = new TestableLoginManagerWithStatics();
+            testableLoginManager.AddUser(SomeUser, SomePassword);
+            string incorrectPassword = SomePassword + "ABC";
+
+            //Act
+            testableLoginManager.ChangePass(SomeUser, incorrectPassword, "ABC");
+
+            //Assert
+            StringAssert.Contains("not changed", testableLoginManager.CallLogText);
+
+        }
+
+        [Test]
         public void IsLoginOK_UnknownUserKnownPassword_LogsFailed()
         {
             //Arrange

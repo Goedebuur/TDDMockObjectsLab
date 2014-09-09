@@ -43,7 +43,14 @@ namespace MyBillingProduct
 
 		public void ChangePass(string user, string oldPass, string newPassword)
 		{
+		    if (m_users[user] != oldPass)
+		    {
+                CallLog("not changed");
+		        return;
+		    }
+
 			m_users[user]= newPassword;
+            CallLog("changed");
 		}
 	}
 }
