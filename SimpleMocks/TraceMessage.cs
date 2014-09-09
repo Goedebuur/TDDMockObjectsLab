@@ -8,13 +8,23 @@ namespace Step1Mocks
 {
     public class TraceMessage
     {
-        private int _severity;
-        private string _message;
+        private readonly int _severity;
+        private readonly string _message;
 
         public TraceMessage(int severity, string message)
         {
             _severity = severity;
             _message = message;
+        }
+
+        public int Severity
+        {
+            get { return _severity; }
+        }
+
+        public string Message
+        {
+            get { return _message; }
         }
     }
 }

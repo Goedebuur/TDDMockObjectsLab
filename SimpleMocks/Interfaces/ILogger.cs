@@ -7,7 +7,7 @@ namespace MyBillingProduct
 {
     public interface ILogger
     {
-        void  Write(string text);
+        void Write(string text);
         void Write(TraceMessage message);
     }
 

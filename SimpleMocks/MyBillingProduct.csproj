@@ -112,6 +112,7 @@
     <Compile Include="Statics\StaticLogger.cs" />
     <Compile Include="Statics\StaticWebService.cs" />
     <Compile Include="InterfaceImpl\WebService.cs" />
+    <Compile Include="TraceMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

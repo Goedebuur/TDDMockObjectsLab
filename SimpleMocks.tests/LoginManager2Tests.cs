@@ -6,6 +6,8 @@ using MyBillingProduct;
 
 using NUnit.Framework;
 
+using Step1Mocks;
+
 namespace SimpleMocks.tests
 {
     [TestFixture]
@@ -40,7 +42,10 @@ namespace SimpleMocks.tests
             loginManager2.IsLoginOK(SomeUser, SomePassword);
 
             //Assert
-            loggerMock.Verify(logger => logger.Write(string.Format("login ok: user: {0}", SomeUser)));
+            loggerMock.Verify(logger => logger.Write(It.Is<TraceMessage>(
+                            message =>
+                                message.Severity == 1000
+                                    && message.Message == string.Format("login ok: user: {0}", SomeUser))));
         }
 
         [Test]
@@ -50,7 +55,7 @@ namespace SimpleMocks.tests
             Mock<ILogger> loggerMock = new Mock<ILogger>();
             Mock<IWebService> serviceMock = new Mock<IWebService>();
 
-            loggerMock.Setup(x => x.Write(It.IsAny<string>()))
+            loggerMock.Setup(x => x.Write(It.IsAny<TraceMessage>()))
                 .Throws<NotImplementedException>();
 
             LoginManager2 loginManager2 = CreateLoginManager2(loggerMock.Object, serviceMock.Object);

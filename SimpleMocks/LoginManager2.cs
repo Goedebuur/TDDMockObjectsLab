@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 
+using Step1Mocks;
+
 namespace MyBillingProduct
 {
     public class LoginManager2
@@ -37,7 +39,7 @@ namespace MyBillingProduct
             {
                 try
                 {
-                    log.Write(string.Format("login ok: user: {0}", user));
+                    log.Write(new TraceMessage(1000, string.Format("login ok: user: {0}", user)));
                 }
                 catch (Exception)
                 {

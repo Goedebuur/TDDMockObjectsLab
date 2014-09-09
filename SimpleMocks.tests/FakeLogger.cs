@@ -1,4 +1,8 @@
-﻿using MyBillingProduct;
+﻿using System;
+
+using MyBillingProduct;
+
+using Step1Mocks;
 
 namespace SimpleMocks.tests
 {
@@ -7,6 +11,11 @@ namespace SimpleMocks.tests
         public void Write(string text)
         {
             Log += text;
+        }
+
+        public void Write(TraceMessage message)
+        {
+            throw new NotImplementedException();
         }
 
         public string Log { get; set; }
