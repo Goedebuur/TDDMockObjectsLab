@@ -49,7 +49,7 @@ namespace MyBillingProduct
             }
             catch (LoggerException e)
             {
-                CallWebService(e);
+               CallWebService(e, DateTime.Now.TimeOfDay);
             }
 
             return false;
@@ -60,9 +60,9 @@ namespace MyBillingProduct
             StaticLogger.Write(text);
         }
 
-        protected virtual void CallWebService(LoggerException e)
+        protected virtual void CallWebService(LoggerException e, TimeSpan now)
         {
-            StaticWebService.Write(string.Format("{0} {1}", e.Message, Environment.MachineName));
+            StaticWebService.Write(string.Format("{0} {1} {2}", e.Message, Environment.MachineName, now));
         }
     }
 }

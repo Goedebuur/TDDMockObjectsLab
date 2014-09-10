@@ -136,6 +136,22 @@ namespace SimpleMocks.tests
             StringAssert.Contains(string.Format("{0} {1}", exceptionMessage, Environment.MachineName), testableLoginManager.CallWebServiceText);
         }
 
+        [Test]
+        public void IsLoginOK_LoggerThrowsException_CallsWebserviceWithSystemTime()
+        {
+            //Arrange
+            const string exceptionMessage = "Fake Exception";
+            TestableLoginManagerLoggerThrowsException testableLoginManager = new TestableLoginManagerLoggerThrowsException(exceptionMessage);
+            testableLoginManager.AddUser(SomeUser, SomePassword);
+
+            //Act
+            testableLoginManager.IsLoginOK(SomeUser, SomePassword);
+
+
+            //Assert
+            StringAssert.Contains(string.Format("{0} {1} {2}", exceptionMessage, Environment.MachineName, DateTime.Now.TimeOfDay), testableLoginManager.CallWebServiceText);
+        }
+
     }
 
     class TestableLoginManager : LoginManagerWithStatics
@@ -165,9 +181,9 @@ namespace SimpleMocks.tests
             throw new LoggerException(_exceptionMessage);
         }
 
-        protected override void CallWebService(LoggerException e)
+        protected override void CallWebService(LoggerException e, TimeSpan now)
         {
-            CallWebServiceText = string.Format("{0} {1}", e.Message, Environment.MachineName);
+            CallWebServiceText = string.Format("{0} {1} {2}", e.Message, Environment.MachineName, now);
         }
     }
 }
