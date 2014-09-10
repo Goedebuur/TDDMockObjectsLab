@@ -26,7 +26,7 @@ namespace SimpleMocks.tests
         public void IsLoginOK_KnownUserKnownPassword_LogsOK()
         {
             //Arrange
-            TestableLoginManagerWithStatics testableLoginManager = new TestableLoginManagerWithStatics();
+            TestableLoginManager testableLoginManager = new TestableLoginManager();
             testableLoginManager.AddUser(SomeUser, SomePassword);
 
             //Act
@@ -41,7 +41,7 @@ namespace SimpleMocks.tests
         public void ChangePass_CorrectOldPasswordSomeNewPassword_LogsChanged()
         {
             //Arrange
-            TestableLoginManagerWithStatics testableLoginManager = new TestableLoginManagerWithStatics();
+            TestableLoginManager testableLoginManager = new TestableLoginManager();
             testableLoginManager.AddUser(SomeUser, SomePassword);
 
             //Act
@@ -56,7 +56,7 @@ namespace SimpleMocks.tests
         public void ChangePass_InCorrectOldPasswordSomeNewPassword_LogsNotChanged()
         {
             //Arrange
-            TestableLoginManagerWithStatics testableLoginManager = new TestableLoginManagerWithStatics();
+            TestableLoginManager testableLoginManager = new TestableLoginManager();
             testableLoginManager.AddUser(SomeUser, SomePassword);
             string incorrectPassword = SomePassword + "ABC";
 
@@ -72,7 +72,7 @@ namespace SimpleMocks.tests
         public void IsLoginOK_UnknownUserKnownPassword_LogsFailed()
         {
             //Arrange
-            TestableLoginManagerWithStatics testableLoginManager = new TestableLoginManagerWithStatics();
+            TestableLoginManager testableLoginManager = new TestableLoginManager();
             testableLoginManager.AddUser(SomeUser, SomePassword);
             
             string unknownUser = SomeUser + "ABC";
@@ -89,7 +89,7 @@ namespace SimpleMocks.tests
         public void IsLoginOK_KnownUserUnknownPassword_LogsFailed()
         {
             //Arrange
-            TestableLoginManagerWithStatics testableLoginManager = new TestableLoginManagerWithStatics();
+            TestableLoginManager testableLoginManager = new TestableLoginManager();
             testableLoginManager.AddUser(SomeUser, SomePassword);
             
             string unknownPassword = SomePassword + "ABC";
@@ -106,7 +106,7 @@ namespace SimpleMocks.tests
         public void IsLoginOK_UnknownUserUnknownPassword_LogsFailed()
         {
             //Arrange
-            TestableLoginManagerWithStatics testableLoginManager = new TestableLoginManagerWithStatics();
+            TestableLoginManager testableLoginManager = new TestableLoginManager();
             testableLoginManager.AddUser(SomeUser, SomePassword);
            
             string unknownUser = SomeUser + "ABC";
@@ -119,15 +119,55 @@ namespace SimpleMocks.tests
             StringAssert.Contains("failed", testableLoginManager.CallLogText);
 
         }
+
+        [Test]
+        public void IsLoginOK_LoggerThrowsException_CallsWebservice()
+        {
+            //Arrange
+            const string exceptionMessage = "Fake Exception";
+            TestableLoginManagerLoggerThrowsException testableLoginManager = new TestableLoginManagerLoggerThrowsException(exceptionMessage);
+            testableLoginManager.AddUser(SomeUser, SomePassword);
+
+            //Act
+            testableLoginManager.IsLoginOK(SomeUser, SomePassword);
+
+
+            //Assert
+            StringAssert.Contains(string.Format("{0} {1}", exceptionMessage, Environment.MachineName), testableLoginManager.CallWebServiceText);
+        }
+
     }
 
-    class TestableLoginManagerWithStatics : LoginManagerWithStatics
+    class TestableLoginManager : LoginManagerWithStatics
     {
         public string CallLogText = string.Empty;
+        public string CallWebServiceText = string.Empty;
 
         protected override void CallLog(string text)
         {
             CallLogText = text;
+        }
+    }
+
+    class TestableLoginManagerLoggerThrowsException : LoginManagerWithStatics
+    {
+        public string CallLogText = string.Empty;
+        public string CallWebServiceText = string.Empty;
+        private readonly string _exceptionMessage;
+
+        public TestableLoginManagerLoggerThrowsException(string exceptionMessage)
+        {
+            _exceptionMessage = exceptionMessage;
+        }
+
+        protected override void CallLog(string text)
+        {
+            throw new LoggerException(_exceptionMessage);
+        }
+
+        protected override void CallWebService(LoggerException e)
+        {
+            CallWebServiceText = string.Format("{0} {1}", e.Message, Environment.MachineName);
         }
     }
 }
