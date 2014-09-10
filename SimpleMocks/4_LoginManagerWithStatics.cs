@@ -49,7 +49,7 @@ namespace MyBillingProduct
             }
             catch (LoggerException e)
             {
-               CallWebService(e, DateTime.Now.TimeOfDay);
+                CallWebService(e, DateTime.Now.TimeOfDay);
             }
 
             return false;

@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using MyBillingProduct;
 
 using NUnit.Framework;
 
@@ -23,21 +18,6 @@ namespace SimpleMocks.tests
         }
 
         [Test]
-        public void IsLoginOK_KnownUserKnownPassword_LogsOK()
-        {
-            //Arrange
-            TestableLoginManager testableLoginManager = new TestableLoginManager();
-            testableLoginManager.AddUser(SomeUser, SomePassword);
-
-            //Act
-            testableLoginManager.IsLoginOK(SomeUser, SomePassword);
-
-            //Assert
-            StringAssert.Contains(string.Format("login ok: user: {0}", SomeUser), testableLoginManager.CallLogText);
-
-        }
-
-        [Test]
         public void ChangePass_CorrectOldPasswordSomeNewPassword_LogsChanged()
         {
             //Arrange
@@ -49,7 +29,6 @@ namespace SimpleMocks.tests
 
             //Assert
             StringAssert.Contains("changed", testableLoginManager.CallLogText);
-
         }
 
         [Test]
@@ -65,24 +44,20 @@ namespace SimpleMocks.tests
 
             //Assert
             StringAssert.Contains("not changed", testableLoginManager.CallLogText);
-
         }
 
         [Test]
-        public void IsLoginOK_UnknownUserKnownPassword_LogsFailed()
+        public void IsLoginOK_KnownUserKnownPassword_LogsOK()
         {
             //Arrange
             TestableLoginManager testableLoginManager = new TestableLoginManager();
             testableLoginManager.AddUser(SomeUser, SomePassword);
-            
-            string unknownUser = SomeUser + "ABC";
 
             //Act
-            testableLoginManager.IsLoginOK(unknownUser, SomePassword);
+            testableLoginManager.IsLoginOK(SomeUser, SomePassword);
 
             //Assert
-            StringAssert.Contains("failed", testableLoginManager.CallLogText);
-
+            StringAssert.Contains(string.Format("login ok: user: {0}", SomeUser), testableLoginManager.CallLogText);
         }
 
         [Test]
@@ -91,7 +66,7 @@ namespace SimpleMocks.tests
             //Arrange
             TestableLoginManager testableLoginManager = new TestableLoginManager();
             testableLoginManager.AddUser(SomeUser, SomePassword);
-            
+
             string unknownPassword = SomePassword + "ABC";
 
             //Act
@@ -99,7 +74,58 @@ namespace SimpleMocks.tests
 
             //Assert
             StringAssert.Contains("failed", testableLoginManager.CallLogText);
+        }
 
+        [Test]
+        public void IsLoginOK_LoggerThrowsException_CallsWebservice()
+        {
+            //Arrange
+            const string exceptionMessage = "Fake Exception";
+            TestableLoginManagerLoggerThrowsException testableLoginManager =
+                new TestableLoginManagerLoggerThrowsException(exceptionMessage);
+            testableLoginManager.AddUser(SomeUser, SomePassword);
+
+            //Act
+            testableLoginManager.IsLoginOK(SomeUser, SomePassword);
+
+            //Assert
+            StringAssert.Contains(
+                string.Format("{0} {1}", exceptionMessage, Environment.MachineName),
+                testableLoginManager.CallWebServiceText);
+        }
+
+        [Test]
+        public void IsLoginOK_LoggerThrowsException_CallsWebserviceWithSystemTime()
+        {
+            //Arrange
+            const string exceptionMessage = "Fake Exception";
+            TestableLoginManagerLoggerThrowsException testableLoginManager =
+                new TestableLoginManagerLoggerThrowsException(exceptionMessage);
+            testableLoginManager.AddUser(SomeUser, SomePassword);
+
+            //Act
+            testableLoginManager.IsLoginOK(SomeUser, SomePassword);
+
+            //Assert
+            StringAssert.Contains(
+                string.Format("{0} {1} {2}", exceptionMessage, Environment.MachineName, DateTime.Now.TimeOfDay),
+                testableLoginManager.CallWebServiceText);
+        }
+
+        [Test]
+        public void IsLoginOK_UnknownUserKnownPassword_LogsFailed()
+        {
+            //Arrange
+            TestableLoginManager testableLoginManager = new TestableLoginManager();
+            testableLoginManager.AddUser(SomeUser, SomePassword);
+
+            string unknownUser = SomeUser + "ABC";
+
+            //Act
+            testableLoginManager.IsLoginOK(unknownUser, SomePassword);
+
+            //Assert
+            StringAssert.Contains("failed", testableLoginManager.CallLogText);
         }
 
         [Test]
@@ -108,7 +134,7 @@ namespace SimpleMocks.tests
             //Arrange
             TestableLoginManager testableLoginManager = new TestableLoginManager();
             testableLoginManager.AddUser(SomeUser, SomePassword);
-           
+
             string unknownUser = SomeUser + "ABC";
             string unknownPassword = SomePassword + "ABC";
 
@@ -117,73 +143,6 @@ namespace SimpleMocks.tests
 
             //Assert
             StringAssert.Contains("failed", testableLoginManager.CallLogText);
-
-        }
-
-        [Test]
-        public void IsLoginOK_LoggerThrowsException_CallsWebservice()
-        {
-            //Arrange
-            const string exceptionMessage = "Fake Exception";
-            TestableLoginManagerLoggerThrowsException testableLoginManager = new TestableLoginManagerLoggerThrowsException(exceptionMessage);
-            testableLoginManager.AddUser(SomeUser, SomePassword);
-
-            //Act
-            testableLoginManager.IsLoginOK(SomeUser, SomePassword);
-
-
-            //Assert
-            StringAssert.Contains(string.Format("{0} {1}", exceptionMessage, Environment.MachineName), testableLoginManager.CallWebServiceText);
-        }
-
-        [Test]
-        public void IsLoginOK_LoggerThrowsException_CallsWebserviceWithSystemTime()
-        {
-            //Arrange
-            const string exceptionMessage = "Fake Exception";
-            TestableLoginManagerLoggerThrowsException testableLoginManager = new TestableLoginManagerLoggerThrowsException(exceptionMessage);
-            testableLoginManager.AddUser(SomeUser, SomePassword);
-
-            //Act
-            testableLoginManager.IsLoginOK(SomeUser, SomePassword);
-
-
-            //Assert
-            StringAssert.Contains(string.Format("{0} {1} {2}", exceptionMessage, Environment.MachineName, DateTime.Now.TimeOfDay), testableLoginManager.CallWebServiceText);
-        }
-
-    }
-
-    class TestableLoginManager : LoginManagerWithStatics
-    {
-        public string CallLogText = string.Empty;
-        public string CallWebServiceText = string.Empty;
-
-        protected override void CallLog(string text)
-        {
-            CallLogText = text;
-        }
-    }
-
-    class TestableLoginManagerLoggerThrowsException : LoginManagerWithStatics
-    {
-        public string CallLogText = string.Empty;
-        public string CallWebServiceText = string.Empty;
-        private readonly string _exceptionMessage;
-
-        public TestableLoginManagerLoggerThrowsException(string exceptionMessage)
-        {
-            _exceptionMessage = exceptionMessage;
-        }
-
-        protected override void CallLog(string text)
-        {
-            throw new LoggerException(_exceptionMessage);
-        }
-
-        protected override void CallWebService(LoggerException e, TimeSpan now)
-        {
-            CallWebServiceText = string.Format("{0} {1} {2}", e.Message, Environment.MachineName, now);
         }
     }
 }
