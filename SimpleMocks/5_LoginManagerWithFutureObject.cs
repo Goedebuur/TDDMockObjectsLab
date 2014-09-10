@@ -29,7 +29,7 @@ namespace MyBillingProduct
             }
             catch (LoggerException e)
             {
-                new WebService().Write(e.Message + Environment.MachineName);
+                new WebService().Write(string.Format("{0} {1}", e.Message, Environment.MachineName));
             }
             if (m_users[user] != null
                 &&

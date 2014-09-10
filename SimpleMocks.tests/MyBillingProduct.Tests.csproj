@@ -55,14 +55,25 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="TypeMock, Version=7.5.4.0, Culture=neutral, PublicKeyToken=3dae460033b8d8e2, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Typemock\Isolator\7.5\TypeMock.dll</HintPath>
+    </Reference>
+    <Reference Include="Typemock.ArrangeActAssert, Version=7.5.4.0, Culture=neutral, PublicKeyToken=3dae460033b8d8e2, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Typemock\Isolator\7.5\Typemock.ArrangeActAssert.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FakeLogger.cs" />
     <Compile Include="FakeWebService.cs" />
     <Compile Include="LoginManager1Tests.cs" />
     <Compile Include="LoginManager2Tests.cs" />
+    <Compile Include="LoginManagerWithFutureObjectTests.cs" />
     <Compile Include="LoginManagerWithStaticsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestableLoginManager.cs" />
+    <Compile Include="TestableLoginManagerLoggerThrowsException.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SimpleMocks\MyBillingProduct.csproj">
