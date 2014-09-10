@@ -18,7 +18,14 @@ namespace MyBillingProduct
 
         public void ChangePass(string user, string oldPass, string newPassword)
         {
+            if (m_users[user] != oldPass)
+            {
+                new RealLogger().Write("not changed");
+                return;
+            }
+
             m_users[user] = newPassword;
+            new RealLogger().Write("changed");
         }
 
         public bool IsLoginOK(string user, string password)
